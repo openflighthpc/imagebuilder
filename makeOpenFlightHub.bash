@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export IMAGENAME=ALCESHUB`date +%d%m%y%H%M`
+export IMAGENAME=OPENFLIGHTHUB`date +%d%m%y%H%M`
 export DEVICE=`losetup -f`
 export ROOTFS=/rootfs
 export IMAGE=/tmp/VHD.img

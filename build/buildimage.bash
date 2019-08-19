@@ -1,8 +1,5 @@
 #!/bin/bash 
 
-#disable selinux ob build target (for chroot password stuff etc)
-setenforce 0
-
 MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 IMAGESIZE=8 #size in GB
 YUMCONF=${MYDIR}/../yum/yum.conf
@@ -76,7 +73,7 @@ if ! [ -z $CUSTOMSCRIPT ]; then
     {
       cp -v $CUSTOMSCRIPT ${ROOTFS}/tmp/custom.bash
       chroot ${ROOTFS} bash -ex /tmp/custom.bash
-    } >/tmp/imageplatform.log 2>&1 || {
+    } >/tmp/imagecustom.log 2>&1 || {
       echo "Failed to run custom script" >&2
     }
   else
