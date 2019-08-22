@@ -5,6 +5,7 @@ export DEVICE=`losetup -f`
 export ROOTFS=/rootfs
 export IMAGE=/tmp/VHD.img
 export IMAGEVHD=/tmp/VHD.vhd
+export PLATFORM=aws
 
 rm -fv $IMAGE
 rm -fv $IMAGEVHD
@@ -21,13 +22,13 @@ export CUSTOMSCRIPT=$MYDIR/custom/openflighthub.bash
   exit 1
 }
 {  
-  bash -e ${MYDIR}/platform/azure/convert.bash
+  bash -e ${MYDIR}/platform/${PLATFORM}/convert.bash
 } || {
   echo "Convert failed!" >&2
   exit 1
 }
 {
-  bash -e ${MYDIR}/platform/azure/upload.bash
+  bash -e ${MYDIR}/platform/${PLATFORM}/upload.bash
 } || {
   echo "Upload failed!" >&2
   exit 1

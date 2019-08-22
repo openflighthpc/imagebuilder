@@ -5,6 +5,7 @@ export DEVICE=`losetup -f`
 export ROOTFS=/rootfs
 export IMAGE=/tmp/VHD.img
 export IMAGEVHD=/tmp/VHD.vhd
+export PLATFORM=aws
 
 rm -fv $IMAGE
 rm -fv $IMAGEVHD
@@ -19,13 +20,13 @@ MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
   exit 1
 }
 {  
-  bash -e ${MYDIR}/platform/azure/convert.bash
+  bash -e ${MYDIR}/platform/${PLATFORM}/convert.bash
 } || {
   echo "Convert failed!" >&2
   exit 1
 }
 {
-  bash -e ${MYDIR}/platform/azure/upload.bash
+  bash -e ${MYDIR}/platform/${PLATFORM}/upload.bash
 } || {
   echo "Upload failed!" >&2
   exit 1
