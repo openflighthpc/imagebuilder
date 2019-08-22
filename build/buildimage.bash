@@ -63,7 +63,7 @@ echo "Base - Logging to /tmp/imagebase.log.."
 }
 echo "Platform - Logging to /tmp/imageplatform.log" 
 {
-  chroot ${ROOTFS} bash -ex /tmp/azure.bash
+  chroot ${ROOTFS} bash -ex /tmp/${PLATFORM}.bash
 } >/tmp/imageplatform.log 2>&1 || {
   echo "Failed to run platform script" >&2
 }
