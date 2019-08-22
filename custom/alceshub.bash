@@ -1,3 +1,3 @@
 set -x
-echo "I am the alces hub" > /root/me.info
-#you prolly wanna curl and bash somethin here
+
+curl -s https://raw.githubusercontent.com/alces-software/flight-appliance-menu/dev/azure/support/appliance_chroot.sh | bash -ex

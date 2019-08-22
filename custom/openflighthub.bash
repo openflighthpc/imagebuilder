@@ -1,3 +1,2 @@
 set -x
-echo "I am the OF hub" > /root/me.info
-#you prolly wanna curl and bash somethin here
+curl https://raw.githubusercontent.com/openflighthpc/openflight-hub/support/chroot-imagebuild/hub-setup.sh |/bin/bash
