@@ -75,7 +75,7 @@ datasource_list: [ Ec2, None ]
 # vim:syntax=yaml
 END
 
-systemctl enable cloud-init.service
+systemctl disable cloud-init.service
 
-echo 'aws' > /etc/yum/vars/infra
+echo 'stock' > /etc/yum/vars/infra
 

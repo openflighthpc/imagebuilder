@@ -23,13 +23,13 @@ cat << EOF > /tmp/image.json
     "Format": "raw",
     "UserBucket": {
       "S3Bucket": "${AWSBUCKET}",
-      "S3Key": "${IMAGENAME}.raw"
+      "S3Key": "${IMAGENAME}_aws.raw"
     }
   }
 ]
 EOF
 
-aws --region eu-west-2 s3 cp ${INIMAGE} s3://${AWSBUCKET}/${IMAGENAME}.raw 
+aws --region eu-west-2 s3 cp ${INIMAGE} s3://${AWSBUCKET}/${IMAGENAME}_aws.raw 
 
 IMPORT_TASK=$(aws ec2 import-image --architecture x86_64 \
                 --region eu-west-2 \

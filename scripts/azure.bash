@@ -104,5 +104,7 @@ datasource_list: [ Ec2, None ]
 # vim:syntax=yaml
 END
 
+systemctl enable cloud-init.service
+
 echo 'azure' > /etc/yum/vars/infra
 

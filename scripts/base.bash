@@ -68,7 +68,6 @@ grub2-install $DEVICE
 
 # Startup services
 systemctl enable sshd.service
-systemctl enable cloud-init.service
 systemctl mask tmp.mount
 
 #Prevent nouveau load
