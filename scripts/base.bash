@@ -80,7 +80,6 @@ sed -i '/^#NAutoVTs=.*/ a\
 NAutoVTs=0' /etc/systemd/logind.conf
 
 echo "virtual-guest" > /etc/tuned/active_profile
-echo 'azure' > /etc/yum/vars/infra
 
 cat  >> /etc/dhcp/dhclient.conf << EOF
 

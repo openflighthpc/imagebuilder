@@ -14,5 +14,6 @@ if ! [ -f "${INIMAGE}" ]; then
   exit 1
 fi
 
+echo "Uploading to s3.."
 aws --region eu-west-2 s3 cp ${INIMAGE} s3://${AWSBUCKET}/${IMAGENAME}_generic.raw 
 

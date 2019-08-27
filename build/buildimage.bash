@@ -61,26 +61,6 @@ echo "Base - Logging to /tmp/imagebase.log.."
 } >/tmp/imagebase.log 2>&1 || {
   echo "Failed to run base script" >&2
 }
-echo "Platform - Logging to /tmp/imageplatform.log" 
-{
-  chroot ${ROOTFS} bash -ex /tmp/${PLATFORM}.bash
-} >/tmp/imageplatform.log 2>&1 || {
-  echo "Failed to run platform script" >&2
-}
-if ! [ -z $CUSTOMSCRIPT ]; then
-  if [ -f $CUSTOMSCRIPT ]; then
-    echo "Custom - Logging to /tmp/imagecustom.log"
-    {
-      cp -v $CUSTOMSCRIPT ${ROOTFS}/tmp/custom.bash
-      chroot ${ROOTFS} bash -ex /tmp/custom.bash
-    } >/tmp/imagecustom.log 2>&1 || {
-      echo "Failed to run custom script" >&2
-    }
-  else
-    echo "Failed Custom script"
-    exit 1
-  fi
-fi
 echo "Image Cleanup - Logging to /tmp/imagecleanup.log"
 {
   chroot ${ROOTFS} bash -ex /tmp/cleanup.bash
