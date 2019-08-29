@@ -1,3 +1,5 @@
+yum -y install cloud-init cloud-utils-growpart
+
 # Configure cloud-init
 cat > /etc/cloud/cloud.cfg << END
 users:
@@ -79,3 +81,7 @@ systemctl enable cloud-init.service
 
 echo 'aws' > /etc/yum/vars/infra
 
+# Ensure nvme driver is included in initramfs for AWS
+cat <<EOF > /etc/dracut.conf.d/10-nvme.conf
+add_drivers+=" nvme "
+EOF

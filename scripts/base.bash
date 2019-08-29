@@ -1,6 +1,6 @@
 
 # Install necessary packages
-yum -y install openssh-server grub2 acpid deltarpm cloud-init cloud-utils-growpart gdisk
+yum -y install openssh-server grub2 acpid deltarpm gdisk
 
 # Remove unnecessary packages
 UNNECESSARY="linux-firmware ivtv-firmware iwl*firmware"
@@ -52,11 +52,6 @@ GRUB_CMDLINE_LINUX="crashkernel=auto console=ttyS0,115200n8 console=tty0 net.ifn
 GRUB_DISABLE_RECOVERY="true"
 END
 echo 'RUN_FIRSTBOOT=NO' > /etc/sysconfig/firstboot
-
-# Ensure nvme driver is included in initramfs for AWS
-cat <<EOF > /etc/dracut.conf.d/10-nvme.conf
-add_drivers+=" nvme "
-EOF
 
 # Recreate initramfs
 KVER=$(echo /boot/vmlinuz-3* | cut -f2- -d'-')

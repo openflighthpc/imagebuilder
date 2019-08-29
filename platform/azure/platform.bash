@@ -1,4 +1,7 @@
 yum -y install WALinuxAgent
+
+yum -y install cloud-init cloud-utils-growpart
+
 cat << EOF > /etc/waagent.conf
 #
 # Microsoft Azure Linux Agent Configuration
