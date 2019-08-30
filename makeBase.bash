@@ -8,6 +8,8 @@ export DEVICE=`losetup -f`
 export ROOTFS=/rootfs
 export IMAGE=/tmp/VHD.img
 export IMAGEVHD=/tmp/VHD.vhd
+export SQUASHSTAGE=/tmp/squashstage/
+export IMAGESQUASH=/tmp/VHD.squash
 export PLATFORM=azure
 export BASEIMAGE=/mnt/BASE.img
 
@@ -20,6 +22,8 @@ echo $$ > /var/run/imager.pid
 
 rm -fv $IMAGE
 rm -fv $IMAGEVHD
+rm -rf $IMAGESQUASH
+rm -rfv $SQUASHSTAGE
 
 MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
