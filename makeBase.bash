@@ -1,7 +1,9 @@
-#!/bin/bash
+#!/bin/bash -e
 
 if [ -z "${IMAGENAME}" ]; then
-  export IMAGENAME=CENTOS7BASE`date +%d%m%y%H%M`
+  export IMAGENAME=BASE-`date +%d%m%y%H%M`
+else
+  export IMAGENAME="${IMAGENAME}"-`date +%d%m%y%H%M`
 fi
 
 export DEVICE=`losetup -f`
@@ -10,8 +12,24 @@ export IMAGE=/tmp/VHD.img
 export IMAGEVHD=/tmp/VHD.vhd
 export SQUASHSTAGE=/tmp/squashstage/
 export IMAGESQUASH=/tmp/VHD.squash
-export PLATFORM=azure
+if [ -z "${PLATFORM}" ]; then
+  PLATFORM=azure
+fi
+export PLATFORM
 export BASEIMAGE=/mnt/BASE.img
+
+if ! [ -z "${CUSTOMSCRIPT}" ]; then
+  if ! [ -f "${CUSTOMSCRIPT}" ]; then
+    echo "Can't locate customescript file - assuming its a link and attempting to download it"
+    curl "${CUSTOMSCRIPT}" > /tmp/customscript.bash
+    if [ $? -ne 0 ]; then
+      "Can't download ${CUSTOMSCRIPT}.." >&2
+      exit 1
+    fi
+    CUSTOMSCRIPT=/tmp/customscript.bash
+  fi
+fi
+export CUSTOMSCRIPT
 
 if [ -f /var/run/imager.pid ]; then
   echo "Someone is already running me, or delete /var/run/imager.pid" >&2

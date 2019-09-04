@@ -15,6 +15,6 @@ if ! [ -f "${INIMAGE}" ]; then
 fi
 
 echo "Uploading to s3.."
-aws --region eu-west-2 s3 cp ${INIMAGE} s3://${AWSBUCKET}/${IMAGENAME}_generic.raw 
-aws --region eu-west-2 s3api put-object-acl --acl public-read --bucket ${AWSBUCKET} --key ${IMAGENAME}_generic.raw
+aws --region eu-west-2 s3 cp ${INIMAGE} s3://${AWSBUCKET}/${IMAGENAME}_generic-cloudinit.raw 
+aws --region eu-west-2 s3api put-object-acl --acl public-read --bucket ${AWSBUCKET} --key ${IMAGENAME}_generic-cloudinit.raw
 
