@@ -27,7 +27,6 @@ ssh_pwauth:   1
 chpasswd:
   list: |
      root:0p3nflight
-  expire: True
 system_info:
   default_user:
     name: flightadmin
