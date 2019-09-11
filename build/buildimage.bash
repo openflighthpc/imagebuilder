@@ -5,6 +5,10 @@ IMAGESIZE=8 #size in GB
 YUMCONF=${MYDIR}/../yum/yum.conf
 SCRIPTS=${MYDIR}/../scripts/
 
+if [ -z "${BOOTABLE}" ]; then
+  export BOOTABLE=1
+fi
+     
 if [ -f "${IMAGE}" ] ; then
   echo "Image exists.." >&2
   exit 1
@@ -24,20 +28,25 @@ fi
 
 echo "Partition & Format - Logging to /tmp/partitionformat.log.. "
 {
-  cat << END | parted ${DEVICE}
+  mkdir -p $ROOTFS
+  if [ ${BOOTABLE} -gt 0 ]; then 
+    cat << END | parted ${DEVICE}
 mktable gpt
 mkpart primary ext2 1 2
 set 1 bios_grub on
 mkpart primary xfs 2 100%
 quit
 END
-  # Wait for a moment, because partition might not have been picked up yet.
-  echo "Parted complete - syncing"
-  sleep 5
+    # Wait for a moment, because partition might not have been picked up yet.
+    echo "Parted complete - syncing"
+    sleep 5
 
-  mkfs.xfs -f -n ftype=1 -L root ${DEVICE}p2
-  mkdir -p $ROOTFS
-  mount ${DEVICE}p2 $ROOTFS
+    mkfs.xfs -f -n ftype=1 -L root ${DEVICE}p2
+    mount ${DEVICE}p2 $ROOTFS
+  else
+    mkfs.ext4 -L root -F ${DEVICE}
+    mount ${DEVICE} ${ROOTFS}
+  fi 
 } >/tmp/partitionformat.log 2>&1
 
 ### Basic CentOS Install

@@ -12,9 +12,19 @@ export IMAGE=/tmp/VHD.img
 export IMAGEVHD=/tmp/VHD.vhd
 export SQUASHSTAGE=/tmp/squashstage/
 export IMAGESQUASH=/tmp/VHD.squash
+export SUPPORTPACK=/tmp/supportpack.tgz
+
 if [ -z "${PLATFORM}" ]; then
   PLATFORM=azure
 fi
+
+if [ "${PLATFORM}" == 'livecd' ]; then
+  BOOTABLE=0
+else
+  BOOTABLE=1
+fi
+
+export BOOTABLE
 export PLATFORM
 export BASEIMAGE=/mnt/BASE.img
 
@@ -40,8 +50,9 @@ echo $$ > /var/run/imager.pid
 
 rm -fv $IMAGE
 rm -fv $IMAGEVHD
-rm -rf $IMAGESQUASH
+rm -fv $IMAGESQUASH
 rm -rfv $SQUASHSTAGE
+rm -fv $SUPPORTPACK
 
 MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 

@@ -5,7 +5,6 @@ if [ -z "${SQUASHSTAGE}" ]; then
   exit 1
 fi
 
-
 mkdir -p ${SQUASHSTAGE}/LiveOS/
 echo "Copying image onto squashfs stage.."
 rsync -pa --sparse $IMAGE ${SQUASHSTAGE}/LiveOS/ext3fs.img

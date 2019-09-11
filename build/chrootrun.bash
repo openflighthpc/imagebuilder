@@ -38,11 +38,18 @@ fi
 losetup $DEVICE $IMAGE
 
 sleep 2
-mount ${DEVICE}p2 $ROOTFS
+
+if [ ${BOOTABLE} -gt 0 ]; then
+  mount ${DEVICE}p2 ${ROOTFS}
+else
+  mount ${DEVICE} ${ROOTFS}
+fi
+
 sleep 1
 mount -o bind /proc ${ROOTFS}/proc
 mount -o bind /dev ${ROOTFS}/dev
 mount -o bind /sys ${ROOTFS}/sys
+mount -o bind / ${ROOTFS}/mnt/
 
 cp -pav /etc/resolv.conf ${ROOTFS}/etc/resolv.conf
 cp -pav ${INSCRIPT} ${ROOTFS}/tmp/${INSCRIPTNAME}
@@ -55,6 +62,7 @@ echo "Entering CHROOT to run ${INSCRIPT} - Logging to $LOG"
 }
 
 echo "Exiting CHROOT.."
+umount ${ROOTFS}/mnt
 umount ${ROOTFS}/dev
 umount ${ROOTFS}/sys
 umount ${ROOTFS}/proc
