@@ -4,9 +4,10 @@ MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 INSCRIPT=$1
 LOG=$2
+ERROR=0
 
-if [ -z "${INSCRIPT}" ] || ! [ -f "${INSCRIPT}" ]; then
-  echo "Full path to script plz.." >&2
+if [ -z "${INSCRIPT}" ] || (! [ "${INSCRIPT}" == 'bash' ] && ! [ -f "${INSCRIPT}" ]); then
+  echo "Full path to script plz or 'bash'.." >&2
   exit 1
 fi
 
@@ -39,7 +40,7 @@ losetup $DEVICE $IMAGE
 
 sleep 2
 
-if [ ${BOOTABLE} -gt 0 ]; then
+if [ "${BOOTABLE}" -gt 0 ]; then
   mount ${DEVICE}p2 ${ROOTFS}
 else
   mount ${DEVICE} ${ROOTFS}
@@ -52,15 +53,27 @@ mount -o bind /sys ${ROOTFS}/sys
 mount -o bind / ${ROOTFS}/mnt/
 
 cp -pav /etc/resolv.conf ${ROOTFS}/etc/resolv.conf
-cp -pav ${INSCRIPT} ${ROOTFS}/tmp/${INSCRIPTNAME}
 
-echo "Entering CHROOT to run ${INSCRIPT} - Logging to $LOG"
-{
-  chroot ${ROOTFS} bash -e /tmp/${INSCRIPTNAME}
-} > $LOG 2>&1 || {
-  echo "Failed to run your script cleanly" >&2
-}
+if [ "${INSCRIPT}" == 'bash' ]; then
+  INSCRIPT=""
+else
+  cp -pav ${INSCRIPT} ${ROOTFS}/tmp/${INSCRIPTNAME}
+fi
 
+if  [ -z "${INSCRIPT}" ]; then
+  {
+    echo "Entering CHROOT - use 'exit' to finish"
+    chroot ${ROOTFS} /bin/bash
+  }
+else
+  echo "Entering CHROOT to run ${INSCRIPT} - Logging to $LOG"
+  { 
+    chroot ${ROOTFS} bash -e /tmp/${INSCRIPTNAME}
+  } > $LOG 2>&1 || {
+    echo "Failed to run your script cleanly" >&2
+    export ERROR=1
+  }
+fi
 echo "Exiting CHROOT.."
 umount ${ROOTFS}/mnt
 umount ${ROOTFS}/dev
@@ -70,3 +83,7 @@ umount ${ROOTFS}/proc
 umount ${ROOTFS}
 
 losetup -d $DEVICE
+
+if [ ${ERROR} -eq 1 ]; then
+  exit 1
+fi

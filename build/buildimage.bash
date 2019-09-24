@@ -5,10 +5,6 @@ IMAGESIZE=8 #size in GB
 YUMCONF=${MYDIR}/../yum/yum.conf
 SCRIPTS=${MYDIR}/../scripts/
 
-if [ -z "${BOOTABLE}" ]; then
-  export BOOTABLE=1
-fi
-     
 if [ -f "${IMAGE}" ] ; then
   echo "Image exists.." >&2
   exit 1
@@ -30,6 +26,7 @@ echo "Partition & Format - Logging to /tmp/partitionformat.log.. "
 {
   mkdir -p $ROOTFS
   if [ ${BOOTABLE} -gt 0 ]; then 
+    echo "Bootable image creating.."
     cat << END | parted ${DEVICE}
 mktable gpt
 mkpart primary ext2 1 2
@@ -44,6 +41,7 @@ END
     mkfs.xfs -f -n ftype=1 -L root ${DEVICE}p2
     mount ${DEVICE}p2 $ROOTFS
   else
+    echo "Plain image creating.."
     mkfs.ext4 -L root -F ${DEVICE}
     mount ${DEVICE} ${ROOTFS}
   fi 

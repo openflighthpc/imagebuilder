@@ -24,6 +24,7 @@ USERCTL=no
 PEERDNS=yes
 IPV6INIT=no
 PERSISTENT_DHCLIENT=1
+ZONE=external
 END
 
 rm -f /etc/udev/rules.d/70*
