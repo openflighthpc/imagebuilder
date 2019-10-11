@@ -31,14 +31,14 @@ EOF
 systemctl enable waagent
 
 # Configure cloud-init
-cat > /etc/cloud/cloud2.cfg << END
+cat > /etc/cloud/cloud.cfg << END
 users:
  - default
 
 disable_root: 1
 ssh_pwauth:   0
 
-mount_default_fields: [~, ~, 'auto', 'defaults,nofail', '0', '2']
+mount_default_fields: [~, ~, 'auto', 'defaults,nofail,x-systemd.requires=cloud-init.service', '0', '2']
 resize_rootfs_tmp: /dev
 ssh_svcname: sshd
 ssh_deletekeys:   True
@@ -46,6 +46,7 @@ ssh_genkeytypes:  [ 'rsa', 'ecdsa', 'ed25519' ]
 syslog_fix_perms: ~
 
 cloud_init_modules:
+ - disk_setup
  - migrator
  - bootcmd
  - write-files
@@ -82,6 +83,7 @@ cloud_final_modules:
  - keys-to-console
  - phone-home
  - final-message
+ - power-state-change
 
 system_info:
   default_user:
@@ -97,12 +99,10 @@ system_info:
     templates_dir: /etc/cloud/templates
   ssh_svcname: sshd
 
-mounts:
- - [ ephemeral0, /media/ephemeral0 ]
- - [ ephemeral1, /media/ephemeral1 ]
- - [ swap, none, swap, sw, "0", "0" ]
-
-datasource_list: [ Ec2, None ]
+#mounts:
+# - [ ephemeral0, /media/ephemeral0 ]
+# - [ ephemeral1, /media/ephemeral1 ]
+# - [ swap, none, swap, sw, "0", "0" ]
 
 # vim:syntax=yaml
 END

@@ -110,7 +110,7 @@ if [ "${ACTION}" == 'build' ]; then
     exit 1
   }
 
-  if ! [ -z "${PLATFORM}" ] && ! [ "${SKIPUPLOAD}" -eq 1 ]; then
+  if ! [ -z "${PLATFORM}" ] && ! [ ${SKIPUPLOAD} -eq 1 ]; then
     {  
       bash -e ${MYDIR}/platform/${PLATFORM}/convert.bash
     } || {
