@@ -15,10 +15,10 @@ Provisioning.MonitorHostName=y
 Provisioning.DecodeCustomData=n
 Provisioning.ExecuteCustomData=n
 Provisioning.AllowResetSysUser=n
-ResourceDisk.Format=y
+ResourceDisk.Format=n
 ResourceDisk.Filesystem=ext4
 ResourceDisk.MountPoint=/mnt/resource
-ResourceDisk.EnableSwap=y
+ResourceDisk.EnableSwap=n
 ResourceDisk.SwapSizeMB=16384
 ResourceDisk.MountOptions=None
 Logs.Verbose=n
@@ -99,10 +99,7 @@ system_info:
     templates_dir: /etc/cloud/templates
   ssh_svcname: sshd
 
-#mounts:
-# - [ ephemeral0, /media/ephemeral0 ]
-# - [ ephemeral1, /media/ephemeral1 ]
-# - [ swap, none, swap, sw, "0", "0" ]
+datasource_list: [ Azure ]
 
 # vim:syntax=yaml
 END

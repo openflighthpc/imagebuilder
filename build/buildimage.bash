@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-IMAGESIZE=8 #size in GB
+IMAGESIZE=48 #size in GB
 YUMCONF=${MYDIR}/../yum/yum.conf
 SCRIPTS=${MYDIR}/../scripts/
 
