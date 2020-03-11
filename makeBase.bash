@@ -20,7 +20,7 @@ else
 fi
 
 if [ -z "${PLATFORM}" ]; then
-  PLATFORM=azure
+  PLATFORM=aws
 fi
 
 if [ "${PLATFORM}" == 'live' ]; then
@@ -31,6 +31,8 @@ fi
 
 if ! [ -z "${SKIPUPLOAD}" ]; then
   export SKIPUPLOAD=1
+else
+  export SKIPUPLOAD=0
 fi
 
 export BOOTABLE
@@ -112,14 +114,14 @@ if [ "${ACTION}" == 'build' ]; then
 
   if ! [ -z "${PLATFORM}" ] && ! [ ${SKIPUPLOAD} -eq 1 ]; then
     {  
-      bash -e ${MYDIR}/platform/${PLATFORM}/convert.bash
+      bash -e ${MYDIR}/platform/${PLATFORM}/convert.bash 
     } || {
       echo "Convert failed!" >&2
       rm /var/run/imager.pid
       exit 1
     }
     {
-      bash -e ${MYDIR}/platform/${PLATFORM}/upload.bash
+      bash -e ${MYDIR}/platform/${PLATFORM}/upload.bash 
     } || {
       echo "Upload failed!" >&2
       rm /var/run/imager.pid
