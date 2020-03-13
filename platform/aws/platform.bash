@@ -83,5 +83,5 @@ echo 'aws' > /etc/yum/vars/infra
 
 # Ensure nvme driver is included in initramfs for AWS
 cat <<EOF > /etc/dracut.conf.d/10-nvme.conf
-add_drivers+=" nvme "
+add_drivers+=" nvme xfs ext4 crc32c_intel "
 EOF

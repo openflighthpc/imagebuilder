@@ -1,8 +1,12 @@
 #!/bin/bash 
 
 MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-IMAGESIZE=12 #size in GB
-YUMCONF=${MYDIR}/../yum/yum.conf
+IMAGESIZE=4 #size in GB
+if [ ${DISTROMAJOR} -eq 8 ]; then
+  YUMCONF=${MYDIR}/../yum/dnf.conf
+else
+  YUMCONF=${MYDIR}/../yum/yum.conf
+fi
 SCRIPTS=${MYDIR}/../scripts/
 
 if [ -f "${IMAGE}" ] ; then
@@ -50,8 +54,14 @@ END
 ### Basic CentOS Install
 echo "Installing OS - logging to /tmp/osinstall.log.."
 yum clean all > /tmp/osinstall.log 2>&1
-yum groups -c $YUMCONF -y install "Compute Node" "Core" --releasever=7 --installroot=$ROOTFS >> /tmp/osinstall.log 2>&1
-yum -c $YUMCONF -y install vim emacs xauth xhost xdpyinfo xterm xclock tigervnc-server ntpdate vconfig bridge-utils patch tcl-devel gettext wget dracut-network nfs-utils --installroot=$ROOTFS >> /tmp/osinstall.log 2>&1
+
+if [ $DISTROMAJOR -eq 7 ]; then
+  yum groups -c $YUMCONF -y install "Compute Node" "Core" --releasever=${DISTROMAJOR} --installroot=$ROOTFS >> /tmp/osinstall.log 2>&1
+  yum -c $YUMCONF -y install vim emacs xauth xhost xdpyinfo xterm xclock tigervnc-server ntpdate vconfig bridge-utils patch tcl-devel gettext wget dracut-network nfs-utils --installroot=$ROOTFS >> /tmp/osinstall.log 2>&1
+elif [ $DISTROMAJOR -eq 8 ]; then
+  dnf groups -c $YUMCONF -y install "Minimal Install" "Core" --releasever=${DISTROMAJOR} --installroot=$ROOTFS >> /tmp/osinstall.log 2>&1
+  dnf -c $YUMCONF -y install vim emacs xauth xhost xdpyinfo xterm tigervnc-server patch tcl-devel gettext wget dracut-network nfs-utils --installroot=$ROOTFS >> /tmp/osinstall.log 2>&1
+fi
 
 echo "Prepping chroot.."
 

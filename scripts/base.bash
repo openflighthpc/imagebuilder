@@ -1,6 +1,10 @@
 
 # Install necessary packages
-yum -y install openssh-server grub2 acpid deltarpm gdisk
+if [ ${DISTROMAJOR} -eq 8 ]; then
+  dnf -y install openssh-server grub2 acpid gdisk kernel
+else
+  yum -y install openssh-server grub2 acpid deltarpm gdisk
+fi
 
 # Remove unnecessary packages
 UNNECESSARY="linux-firmware ivtv-firmware iwl*firmware"
@@ -52,10 +56,6 @@ GRUB_TERMINAL_OUTPUT="console"
 GRUB_CMDLINE_LINUX="crashkernel=auto console=ttyS0,115200n8 console=tty0 net.ifnames=0 blacklist=nouveau rdblacklist=nouveau nouveau.modeset=0"
 GRUB_DISABLE_RECOVERY="true"
 END
-
-  # Recreate initramfs
-  KVER=$(echo /boot/vmlinuz-3* | cut -f2- -d'-')
-  dracut -f /boot/initramfs-${KVER}.img ${KVER}
 
   # Install grub2
   grub2-mkconfig -o /boot/grub2/grub.cfg

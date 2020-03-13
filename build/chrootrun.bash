@@ -6,6 +6,10 @@ INSCRIPT=$1
 LOG=$2
 ERROR=0
 
+if [ -z "${BOOTABLE}" ]; then
+  BOOTABLE=1
+fi
+
 if [ -z "${INSCRIPT}" ] || (! [ "${INSCRIPT}" == 'bash' ] && ! [ -f "${INSCRIPT}" ]); then
   echo "Full path to script plz or 'bash'.." >&2
   exit 1
@@ -40,7 +44,7 @@ losetup $DEVICE $IMAGE
 
 sleep 2
 
-if [ "${BOOTABLE}" -gt 0 ]; then
+if [ ${BOOTABLE} -gt 0 ]; then
   mount ${DEVICE}p2 ${ROOTFS}
 else
   mount ${DEVICE} ${ROOTFS}

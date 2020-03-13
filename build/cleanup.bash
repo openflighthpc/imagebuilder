@@ -5,6 +5,7 @@ rm -rf ${ROOTFS}/tmp/*
 
 umount ${ROOTFS}/dev
 umount ${ROOTFS}/proc
+umount ${ROOTFS}/sys/fs/fuse/connections/
 umount ${ROOTFS}/sys
 
 sync

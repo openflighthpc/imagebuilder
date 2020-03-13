@@ -13,6 +13,7 @@ export IMAGEVHD=/tmp/VHD.vhd
 export SQUASHSTAGE=/tmp/squashstage/
 export IMAGESQUASH=/tmp/VHD.squash
 export SUPPORTPACK=/tmp/supportpack.tgz
+
 if [ -z "${ACTION}" ]; then
   export ACTION='build'
 else
@@ -27,6 +28,10 @@ if [ "${PLATFORM}" == 'live' ]; then
   BOOTABLE=0
 else
   BOOTABLE=1
+fi
+
+if [ -z "${DISTROMAJOR}" ]; then
+  export DISTROMAJOR=7
 fi
 
 if ! [ -z "${SKIPUPLOAD}" ]; then
@@ -103,6 +108,15 @@ if [ "${ACTION}" == 'build' ]; then
       exit 1
     }
   fi
+
+  {
+    bash -e ${MYDIR}/build/chrootrun.bash ${MYDIR}/build/postimage.bash /tmp/postimage.log
+  } || {
+    echo "PostBuild failed!" >&2
+    bash ${MYDIR}/build/cleanup.bash
+    rm /var/run/imager.pid
+    exit 1
+  }
 
   {
     bash -e ${MYDIR}/build/chrootrun.bash ${MYDIR}/scripts/cleanup.bash /tmp/imagecleanup.log
