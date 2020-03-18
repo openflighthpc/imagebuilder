@@ -108,3 +108,6 @@ systemctl enable cloud-init.service
 
 echo 'azure' > /etc/yum/vars/infra
 
+cat <<EOF > /etc/dracut.conf.d/aws.conf
+add_drivers+=" nvme hv_vmbus hv_netvsc hv_storvsc "
+EOF

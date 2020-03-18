@@ -4,7 +4,7 @@ INIMAGE=$IMAGEVHD
 AZ_STORAGEACCOUNT="alcesflightimages"
 AZ_STORAGECONTAINER="images"
 
-AZ_RESOURCEGROUP="alcesflight"
+AZ_RESOURCEGROUP="sfn"
 
 AWSBUCKET=flight-images
 
