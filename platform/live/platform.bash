@@ -83,8 +83,11 @@ systemctl enable cloud-init.service
 
 echo 'stock' > /etc/yum/vars/infra
 
+
+yum -y install dracut-live dracut-squash dracut-network
+
 # Recreate initramfs
-KVER=$(echo /boot/vmlinuz-3* | cut -f2- -d'-')
+KVER=$(echo /boot/vmlinuz-*.x86_64 | cut -f2- -d'-')
 dracut -N -a livenet -a dmsquash-live -a nfs -a biosdevname -f -v /boot/initramfs-${KVER}.img ${KVER}
 
 echo "Listing initrd for reference" 
