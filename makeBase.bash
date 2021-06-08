@@ -88,7 +88,7 @@ if [ "${ACTION}" == 'build' ]; then
       exit 1
     }
   fi
-
+  
   if ! [ -z "${PLATFORM}" ]; then
     {
       bash -e ${MYDIR}/build/chrootrun.bash ${MYDIR}/platform/${PLATFORM}/platform.bash /tmp/imageplatform.log

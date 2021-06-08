@@ -6,6 +6,20 @@ else
   yum -y install openssh-server grub2 acpid deltarpm gdisk
 fi
 
+#yum update
+if [ ${DISTROMAJOR} -eq 8 ]; then
+  dnf -y update
+else
+  yum -y update
+fi
+
+if [ ${DISTROMAJOR} -eq 7 ]; then
+  cat << EOF > /etc/NetworkManager/conf.d/99-disableNMDNS.conf
+[main]
+dns=none
+EOF
+fi
+
 # Remove unnecessary packages
 UNNECESSARY="linux-firmware ivtv-firmware iwl*firmware"
 yum -C -y remove $UNNECESSARY --setopt="clean_requirements_on_remove=1"

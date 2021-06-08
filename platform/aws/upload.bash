@@ -16,6 +16,8 @@ fi
 
 aws --region eu-west-2 s3 cp ${INIMAGE} s3://${AWSBUCKET}/${IMAGENAME}_aws.raw
 
+sleep 20
+
 #if [ ${DISTROMAJOR} -eq 8 ]; then
 #EL8 requires snapshot then manual conversion to AMI
 cat << EOF > /tmp/image.json
@@ -47,7 +49,7 @@ while [[ "$(aws ec2 describe-import-snapshot-tasks --output table --region eu-we
         echo "Waiting for import (${IMPORT_TASK_ID}) to complete..."
     sleep 30
 done
-sleep 5
+sleep 30
 SS_ID=$(aws ec2 describe-import-snapshot-tasks --region eu-west-2 --output text --import-task-ids $IMPORT_TASK_ID | grep SNAPSHOTTASKDETAIL | cut -f 5)
 echo "Snapshot created! (${SS_ID})" 
 
