@@ -51,7 +51,7 @@ END
   fi 
 } >/tmp/partitionformat.log 2>&1
 
-### Basic CentOS Install
+### Basic OS Install
 echo "Installing OS - logging to /tmp/osinstall.log.."
 yum clean all > /tmp/osinstall.log 2>&1
 

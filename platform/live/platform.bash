@@ -57,7 +57,7 @@ cloud_final_modules:
 
 system_info:
   default_user:
-    name: centos
+    name: openflight
     lock_passwd: true
     gecos: Cloud User
     groups: [wheel, adm, systemd-journal]
