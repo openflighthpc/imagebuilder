@@ -10,6 +10,10 @@ if [ -z "${BOOTABLE}" ]; then
   BOOTABLE=1
 fi
 
+if [ -z "${EFI}" ]; then 
+  EFI=0
+fi
+
 if [ -z "${INSCRIPT}" ] || (! [ "${INSCRIPT}" == 'bash' ] && ! [ -f "${INSCRIPT}" ]); then
   echo "Full path to script plz or 'bash'.." >&2
   exit 1
@@ -45,7 +49,13 @@ losetup $DEVICE $IMAGE
 sleep 2
 
 if [ ${BOOTABLE} -gt 0 ]; then
-  mount ${DEVICE}p2 ${ROOTFS}
+  if [ ${EFI} -gt 0 ]; then
+    mount ${DEVICE}p4 ${ROOTFS}
+    mount ${DEVICE}p3 ${ROOTFS}/boot/
+    mount ${DEVICE}p2 ${ROOTFS}/boot/efi
+  else
+    mount ${DEVICE}p2 ${ROOTFS}
+  fi
 else
   mount ${DEVICE} ${ROOTFS}
 fi
@@ -84,6 +94,8 @@ umount ${ROOTFS}/dev
 umount ${ROOTFS}/sys
 umount ${ROOTFS}/proc
 
+umount ${ROOTFS}/boot/efi || true
+umount ${ROOTFS}/boot/ || true
 umount ${ROOTFS}
 
 losetup -d $DEVICE

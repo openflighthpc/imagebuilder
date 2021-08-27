@@ -104,6 +104,24 @@ datasource_list: [ Azure ]
 # vim:syntax=yaml
 END
 
+cat <<EOF > /etc/cloud/cloud.cfg.d/00-azure-swap.cfg
+#cloud-config
+disk_setup:
+  ephemeral0:
+    table_type: mbr
+    layout: [66, [33, 82]]
+    overwrite: True
+fs_setup:
+  - device: ephemeral0.1
+    filesystem: ext4
+  - device: ephemeral0.2
+    filesystem: swap
+mounts:
+  - ["ephemeral0.1", "/mnt"]
+  - ["ephemeral0.2", "none", "swap", "sw", "0", "0"]
+EOF
+
+
 systemctl enable cloud-init.service
 
 echo 'azure' > /etc/yum/vars/infra

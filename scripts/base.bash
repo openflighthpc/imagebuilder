@@ -13,12 +13,12 @@ else
   yum -y update
 fi
 
-if [ ${DISTROMAJOR} -eq 7 ]; then
-  cat << EOF > /etc/NetworkManager/conf.d/99-disableNMDNS.conf
-[main]
-dns=none
-EOF
-fi
+#if [ ${DISTROMAJOR} -eq 7 ]; then
+#  cat << EOF > /etc/NetworkManager/conf.d/99-disableNMDNS.conf
+#[main]
+#dns=none
+#EOF
+#fi
 
 # Remove unnecessary packages
 UNNECESSARY="linux-firmware ivtv-firmware iwl*firmware"
@@ -53,14 +53,28 @@ ln -snf /usr/share/zoneinfo/UTC /etc/localtime
 echo 'ZONE="UTC"' > /etc/sysconfig/clock
 
 if [ ${BOOTABLE} -gt 0 ]; then
-  # fstab
-  cat > /etc/fstab << END
+  if [ ${EFI} -gt 0 ]; then
+    # fstab
+    cat > /etc/fstab << END
+LABEL=root /         xfs    defaults,relatime  1 1
+LABEL=boot /boot     xfs    defaults,relatime  1 1
+LABEL=efi /boot/efi  vfat   defaults,uid=0,gid=0,umask=0077,shortname=winnt 0 0
+tmpfs   /dev/shm  tmpfs   defaults           0 0
+devpts  /dev/pts  devpts  gid=5,mode=620     0 0
+sysfs   /sys      sysfs   defaults           0 0
+proc    /proc     proc    defaults           0 0
+END
+  else
+    # fstab
+    cat > /etc/fstab << END
 LABEL=root /         xfs    defaults,relatime  1 1
 tmpfs   /dev/shm  tmpfs   defaults           0 0
 devpts  /dev/pts  devpts  gid=5,mode=620     0 0
 sysfs   /sys      sysfs   defaults           0 0
 proc    /proc     proc    defaults           0 0
 END
+  fi
+
   #grub config taken from /etc/sysconfig/grub on RHEL7 AMI
   cat > /etc/default/grub << END
 GRUB_TIMEOUT=1
@@ -71,6 +85,15 @@ GRUB_CMDLINE_LINUX="crashkernel=auto console=ttyS0,115200n8 console=tty0 net.ifn
 GRUB_DISABLE_RECOVERY="true"
 END
 
+  if [ ${EFI} -gt 0 ]; then
+    #specific kernel cmdline for azure :|
+    sed -i -e 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="rootdelay=300 console=ttyS0 earlyprintk=ttyS0 crashkernel=auto console=ttyS0,115200n8 net.ifnames=0 blacklist=nouveau rdblacklist=nouveau nouveau.modeset=0"/g' /etc/default/grub
+    yum -y install grub2-efi shim efibootmgr
+    grub2-mkconfig -o /etc/grub2.cfg
+    grub2-mkconfig -o /etc/grub2-efi.cfg
+    sed --follow-symlinks -i -e 's/linux16/linuxefi/g' -e 's/initrd16/initrdefi/g' /etc/grub2-efi.cfg
+    
+  fi
   # Install grub2
   grub2-mkconfig -o /boot/grub2/grub.cfg
   grub2-install $DEVICE
@@ -124,6 +147,8 @@ passwd -l root
 
 #Change default runlevel
 ln -snf /usr/lib/systemd/system/multi-user.target /etc/systemd/system/default.target
+
+ln -snf /dev/null /etc/udev/rules.d/75-persistent-net-generator.rules
 
 mkdir -p /var/lib/firstrun/{bin,scripts}
 mkdir -p /var/log/firstrun/

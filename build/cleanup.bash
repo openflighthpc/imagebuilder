@@ -10,6 +10,8 @@ umount ${ROOTFS}/sys
 
 sync
 sleep 5
+umount ${ROOTFS}/boot/efi || true 
+umount ${ROOTFS}/boot/ || true 
 umount ${ROOTFS}
 
 losetup -d $DEVICE

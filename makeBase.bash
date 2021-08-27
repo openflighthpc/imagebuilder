@@ -13,6 +13,7 @@ export IMAGEVHD=/tmp/VHD.vhd
 export SQUASHSTAGE=/tmp/squashstage/
 export IMAGESQUASH=/tmp/VHD.squash
 export SUPPORTPACK=/tmp/supportpack.tgz
+export EFI=0
 
 if [ -z "${ACTION}" ]; then
   export ACTION='build'
@@ -30,6 +31,12 @@ else
   BOOTABLE=1
 fi
 
+if [ "${PLATFORM}" == 'azure' ]; then
+  EFI=1
+else
+  EFI=0
+fi
+
 if [ -z "${DISTROMAJOR}" ]; then
   export DISTROMAJOR=7
 fi
@@ -40,6 +47,7 @@ else
   export SKIPUPLOAD=0
 fi
 
+export EFI
 export BOOTABLE
 export PLATFORM
 export BASEIMAGE=/mnt/BASE.img
@@ -80,10 +88,10 @@ if [ "${ACTION}" == 'build' ]; then
   else
     echo "No Baseimage found - building a new one" 
     {
-      bash -e ${MYDIR}/build/buildimage.bash
+      bash -x -e ${MYDIR}/build/buildimage.bash
     } || { 
       echo "Build failed!" >&2
-      bash ${MYDIR}/build/cleanup.bash
+      bash -x ${MYDIR}/build/cleanup.bash
       rm /var/run/imager.pid
       exit 1
     }
@@ -91,7 +99,7 @@ if [ "${ACTION}" == 'build' ]; then
   
   if ! [ -z "${PLATFORM}" ]; then
     {
-      bash -e ${MYDIR}/build/chrootrun.bash ${MYDIR}/platform/${PLATFORM}/platform.bash /tmp/imageplatform.log
+      bash -x -e ${MYDIR}/build/chrootrun.bash ${MYDIR}/platform/${PLATFORM}/platform.bash /tmp/imageplatform.log
     } || {
       echo "Platform run failed!" >&2
       rm /var/run/imager.pid
@@ -101,7 +109,7 @@ if [ "${ACTION}" == 'build' ]; then
 
   if ! [ -z "${CUSTOMSCRIPT}" ]; then
     {
-      bash -e ${MYDIR}/build/chrootrun.bash ${CUSTOMSCRIPT} /tmp/imagecustom.log
+      bash -x -e ${MYDIR}/build/chrootrun.bash ${CUSTOMSCRIPT} /tmp/imagecustom.log
     } || {
       echo "Custom run failed!" >&2
       rm /var/run/imager.pid
@@ -110,7 +118,7 @@ if [ "${ACTION}" == 'build' ]; then
   fi
 
   {
-    bash -e ${MYDIR}/build/chrootrun.bash ${MYDIR}/build/postimage.bash /tmp/postimage.log
+    bash -x -e ${MYDIR}/build/chrootrun.bash ${MYDIR}/build/postimage.bash /tmp/postimage.log
   } || {
     echo "PostBuild failed!" >&2
     bash ${MYDIR}/build/cleanup.bash
