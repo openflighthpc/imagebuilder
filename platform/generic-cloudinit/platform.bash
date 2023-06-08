@@ -72,7 +72,7 @@ mounts:
  - [ ephemeral1, /media/ephemeral1 ]
  - [ swap, none, swap, sw, "0", "0" ]
 
-datasource_list: [ NoCloud, None ]
+datasource_list: [ OpenStack, NoCloud, None ]
 
 # vim:syntax=yaml
 END

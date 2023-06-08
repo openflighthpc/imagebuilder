@@ -84,7 +84,13 @@ systemctl enable cloud-init.service
 echo 'stock' > /etc/yum/vars/infra
 
 
-yum -y install dracut-live dracut-squash dracut-network
+yum -y install dracut-live dracut-squash dracut-network 
+yum -y install linux-firmware
+
+# Ensure nvme driver is included in initramfs for AWS
+cat <<EOF > /etc/dracut.conf.d/live.conf
+add_drivers+=" nvme xfs ext4 crc32c_intel qedr qede mlx5_core qed "
+EOF
 
 # Recreate initramfs
 KVER=$(echo /boot/vmlinuz-*.x86_64 | cut -f2- -d'-')
