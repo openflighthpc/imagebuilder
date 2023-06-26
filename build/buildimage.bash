@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-IMAGESIZE=4 #size in GB
+IMAGESIZE=10 #size in GB
 if [ ${DISTROMAJOR} -eq 8 ]; then
   YUMCONF=${MYDIR}/../yum/dnf.conf
 else

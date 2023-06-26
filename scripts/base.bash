@@ -88,7 +88,7 @@ END
   if [ ${EFI} -gt 0 ]; then
     #specific kernel cmdline for azure :|
     sed -i -e 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="rootdelay=300 console=ttyS0 earlyprintk=ttyS0 crashkernel=auto console=ttyS0,115200n8 net.ifnames=0 blacklist=nouveau rdblacklist=nouveau nouveau.modeset=0"/g' /etc/default/grub
-    yum -y install grub2-efi shim efibootmgr
+    yum -y install grub2-efi shim efibootmgr grub2-efi-x64
     grub2-mkconfig -o /etc/grub2.cfg
     grub2-mkconfig -o /etc/grub2-efi.cfg
     sed --follow-symlinks -i -e 's/linux16/linuxefi/g' -e 's/initrd16/initrdefi/g' /etc/grub2-efi.cfg
