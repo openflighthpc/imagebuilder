@@ -85,3 +85,6 @@ echo 'aws' > /etc/yum/vars/infra
 cat <<EOF > /etc/dracut.conf.d/aws.conf
 add_drivers+=" nvme xfs ext4 crc32c_intel "
 EOF
+
+#marketplace will complain if the sshd config isn't locked down manually as well as cloudinit..
+sed -i -e 's/^PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
