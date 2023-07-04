@@ -83,7 +83,7 @@ echo 'aws' > /etc/yum/vars/infra
 
 # Ensure nvme driver is included in initramfs for AWS
 cat <<EOF > /etc/dracut.conf.d/aws.conf
-add_drivers+=" nvme xfs ext4 crc32c_intel "
+add_drivers+=" nvme xfs ext4 crc32c_intel ata_piix ata_generic libata i2c_piix4 "
 EOF
 
 #marketplace will complain if the sshd config isn't locked down manually as well as cloudinit..

@@ -15,6 +15,7 @@ if ! [ -f "${INIMAGE}" ]; then
 fi
 
 aws --region eu-west-2 s3 cp ${INIMAGE} s3://${AWSBUCKET}/${IMAGENAME}_aws.raw
+aws --region eu-west-2 s3api put-object-acl --acl public-read --bucket ${AWSBUCKET} --key ${IMAGENAME}_aws.raw
 
 sleep 20
 

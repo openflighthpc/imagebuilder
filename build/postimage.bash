@@ -8,5 +8,5 @@ if [ ${DISTROMAJOR} -eq 8 ]; then
 else
   KVER=$(echo /boot/vmlinuz-3* | cut -f2- -d'-')
 fi
-dracut -v -f /boot/initramfs-${KVER}.img ${KVER}
+dracut -N -v -f /boot/initramfs-${KVER}.img ${KVER}
 

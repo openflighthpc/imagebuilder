@@ -21,6 +21,7 @@ fi
 
 echo "Uploading to AWS s3.." 
 aws --region eu-west-2 s3 cp ${INIMAGE} s3://${AWSBUCKET}/${IMAGENAME}_azure.raw
+aws --region eu-west-2 s3api put-object-acl --acl public-read --bucket ${AWSBUCKET} --key ${IMAGENAME}_azure.raw
 
 echo "Uploading ${INIMAGE} to Azure as ${IMAGENAME}.."
 az storage blob upload --account-name ${AZ_STORAGEACCOUNT}  --container-name ${AZ_STORAGECONTAINER}  --type page --file ${INIMAGE} --name ${IMAGENAME}.vhd
