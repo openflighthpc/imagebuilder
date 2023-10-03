@@ -44,7 +44,7 @@ if ! [ -d "${ROOTFS}" ]; then
   mkdir ${ROOTFS}
 fi
 
-losetup $DEVICE $IMAGE
+losetup $DEVICE $IMAGE --partscan
 
 sleep 2
 

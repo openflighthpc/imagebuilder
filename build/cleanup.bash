@@ -1,6 +1,7 @@
 #!/bin/bash
 echo "Attempting Cleanup.."
 
+rm -rf ${ROOTFS}/var/tmp/*
 rm -rf ${ROOTFS}/tmp/*
 
 umount ${ROOTFS}/dev

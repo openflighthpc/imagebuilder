@@ -4,6 +4,8 @@ MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 IMAGESIZE=10 #size in GB
 if [ ${DISTROMAJOR} -eq 8 ]; then
   YUMCONF=${MYDIR}/../yum/dnf.conf
+elif  [ ${DISTROMAJOR} -eq 9 ]; then
+  YUMCONF=${MYDIR}/../yum/dnf9.conf
 else
   YUMCONF=${MYDIR}/../yum/yum.conf
 fi
@@ -76,15 +78,22 @@ END
 
 ### Basic OS Install
 echo "Installing OS - logging to /tmp/osinstall.log.."
-yum clean all > /tmp/osinstall.log 2>&1
 
 if [ $DISTROMAJOR -eq 7 ]; then
+  yum clean all > /tmp/osinstall.log 2>&1
   yum groups -c $YUMCONF -y install "Compute Node" "Core" --releasever=${DISTROMAJOR} --installroot=$ROOTFS >> /tmp/osinstall.log 2>&1
   yum -c $YUMCONF -y install vim emacs xauth xhost xdpyinfo xterm xclock tigervnc-server ntpdate vconfig bridge-utils patch tcl-devel gettext wget dracut-network nfs-utils --installroot=$ROOTFS >> /tmp/osinstall.log 2>&1
-
-elif [ $DISTROMAJOR -eq 8 ]; then
+elif [ $DISTROMAJOR -eq 8 ] ; then
+  dnf clean all > /tmp/osinstall.log 2>&1
   dnf groups -c $YUMCONF -y install "Minimal Install" "Core" --releasever=${DISTROMAJOR} --installroot=$ROOTFS >> /tmp/osinstall.log 2>&1
   dnf -c $YUMCONF -y install vim emacs xauth xhost xdpyinfo xterm tigervnc-server patch tcl-devel gettext wget dracut-network nfs-utils --installroot=$ROOTFS >> /tmp/osinstall.log 2>&1
+  dnf clean all
+  rpmdb --rebuilddb
+elif [ $DISTROMAJOR -eq 9 ]; then
+  dnf groups -c $YUMCONF -y install "Minimal Install" "Core" --releasever=${DISTROMAJOR} --installroot=$ROOTFS >> /tmp/osinstall.log 2>&1
+  dnf -c $YUMCONF -y install vim emacs xauth xhost xdpyinfo xterm tigervnc-server patch tcl-devel gettext wget dracut-network nfs-utils --installroot=$ROOTFS >> /tmp/osinstall.log 2>&1
+  dnf clean all
+  rpmdb --rebuilddb
 fi
 
 echo "Prepping chroot.."

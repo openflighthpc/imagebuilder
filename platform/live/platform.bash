@@ -1,6 +1,10 @@
 echo 'stock' > /etc/yum/vars/infra
 
-yum -y install cloud-init cloud-utils-growpart
+if [ $DISTROMAJOR -eq 7 ]; then
+  yum -y install cloud-init cloud-utils-growpart
+elif [ $DISTROMAJOR -eq 8 ] || [ ${DISTROMAJOR} -eq 9 ]; then
+  dnf --nogpgcheck -y install cloud-init cloud-utils-growpart
+fi
 
 # Configure cloud-init
 cat > /etc/cloud/cloud.cfg << END
@@ -94,7 +98,12 @@ EOF
 
 # Recreate initramfs
 KVER=$(echo /boot/vmlinuz-*.x86_64 | cut -f2- -d'-')
-dracut -N -a livenet -a dmsquash-live -a nfs -a biosdevname -f -v /boot/initramfs-${KVER}.img ${KVER}
+
+if [ $DISTROMAJOR -eq 7 ]; then
+  dracut -N -a livenet -a dmsquash-live -a nfs -a biosdevname -f -v /boot/initramfs-${KVER}.img ${KVER}
+elif [ $DISTROMAJOR -eq 8 ] || [ ${DISTROMAJOR} -eq 9 ]; then
+  dracut -N -a livenet -a dmsquash-live -a nfs -f -v /boot/initramfs-${KVER}.img ${KVER}
+fi
 
 echo "Listing initrd for reference" 
 lsinitrd /boot/initramfs-${KVER}.img

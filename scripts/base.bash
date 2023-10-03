@@ -1,13 +1,14 @@
 
 # Install necessary packages
-if [ ${DISTROMAJOR} -eq 8 ]; then
+if [ ${DISTROMAJOR} -eq 8 ] || [ ${DISTROMAJOR} -eq 9 ]; then
   dnf -y install openssh-server grub2 acpid gdisk kernel
+  dnf -y install tuned dhcp-client
 else
   yum -y install openssh-server grub2 acpid deltarpm gdisk
 fi
 
 #yum update
-if [ ${DISTROMAJOR} -eq 8 ]; then
+if [ ${DISTROMAJOR} -eq 8 ] || [ ${DISTROMAJOR} -eq 9 ]; then
   dnf -y update
 else
   yum -y update
@@ -75,6 +76,19 @@ proc    /proc     proc    defaults           0 0
 END
   fi
 
+if [ ${DISTROMAJOR} -eq 9 ]; then
+  #grub config taken from /etc/sysconfig/grub on RHEL7 AMI
+  cat > /etc/default/grub << END
+GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
+GRUB_TIMEOUT=1
+GRUB_DEFAULT=saved
+GRUB_DISABLE_SUBMENU=true
+GRUB_TERMINAL_OUTPUT="console"
+GRUB_CMDLINE_LINUX="crashkernel=auto console=ttyS0,115200n8 console=tty0 net.ifnames=0 blacklist=nouveau rdblacklist=nouveau nouveau.modeset=0"
+GRUB_DISABLE_RECOVERY="true"
+GRUB_ENABLE_BLSCFG=false
+END
+else
   #grub config taken from /etc/sysconfig/grub on RHEL7 AMI
   cat > /etc/default/grub << END
 GRUB_TIMEOUT=1
@@ -83,18 +97,23 @@ GRUB_DISABLE_SUBMENU=true
 GRUB_TERMINAL_OUTPUT="console"
 GRUB_CMDLINE_LINUX="crashkernel=auto console=ttyS0,115200n8 console=tty0 net.ifnames=0 blacklist=nouveau rdblacklist=nouveau nouveau.modeset=0"
 GRUB_DISABLE_RECOVERY="true"
+GRUB_ENABLE_BLSCFG=false
 END
+fi
 
   if [ ${EFI} -gt 0 ]; then
     #specific kernel cmdline for azure :|
     sed -i -e 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="rootdelay=300 console=ttyS0 earlyprintk=ttyS0 crashkernel=auto console=ttyS0,115200n8 net.ifnames=0 blacklist=nouveau rdblacklist=nouveau nouveau.modeset=0"/g' /etc/default/grub
     yum -y install grub2-efi shim efibootmgr grub2-efi-x64
+    export GRUB_ENABLE_BLSCFG=false
     grub2-mkconfig -o /etc/grub2.cfg
     grub2-mkconfig -o /etc/grub2-efi.cfg
+    grub2-mkconfig -o /boot/efi/EFI/rocky/grub.cfg
     sed --follow-symlinks -i -e 's/linux16/linuxefi/g' -e 's/initrd16/initrdefi/g' /etc/grub2-efi.cfg
     
   fi
   # Install grub2
+  export GRUB_ENABLE_BLSCFG=false
   grub2-mkconfig -o /boot/grub2/grub.cfg
   grub2-install $DEVICE
 
